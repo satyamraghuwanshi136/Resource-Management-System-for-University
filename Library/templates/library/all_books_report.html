@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <title>All books</title>
+</head>
+<body>
+  <h1 style="font-size: 25px;">All Available Books In The Library</h1>
+  <table class="table table-striped" style="border: 1px solid black; padding: 5px;">
+    <thead>
+      <tr>
+        <th scope="col" style="width: 60px;">S.No.</th>
+        <th scope="col" style="text-align: left; width: 220px;">Book Name</th>
+        <th scope="col" style="text-align: left; width: 80px;">ISBN</th>
+        <th scope="col" style="text-align: left; ">Author</th>
+        <th scope="col" style="text-align: left;">Category</th>
+        <th scope="col" style="text-align: left; width: 60px;">Quantity</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in avlbooks %}
+      <tr>
+        <th scope="row">{{forloop.counter0|add:1}}</th>
+        <td>{{ book.name }}</td>
+        <td>{{ book.isbn }}</td>
+        <td>{{ book.author }}</td>
+        <td>{{ book.category }}</td>
+        {% if  book.quantity != 0 %}
+          <td>{{ book.quantity }}</td>
+        {% else  %}
+          <td><span class="badge badge-danger badge-pill">Not Available</span></td>
+        {% endif  %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p style="page-break-before: always;"></p>
+
+  <h1 style="font-size: 25px;">All Not Available Books In The Library</h1>
+  <table class="table table-striped" style="border: 1px solid black; padding: 5px;">
+    <thead>
+      <tr>
+        <th scope="col" style="width: 60px;">S.No.</th>
+        <th scope="col" style="text-align: left; width: 220px;">Book Name</th>
+        <th scope="col" style="text-align: left; width: 80px;">ISBN</th>
+        <th scope="col" style="text-align: left; ">Author</th>
+        <th scope="col" style="text-align: left;">Category</th>
+        <th scope="col" style="text-align: left; width: 60px;">Quantity</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in ntavlbooks %}
+      <tr>
+        <th scope="row">{{forloop.counter0|add:1}}</th>
+        <td>{{ book.name }}</td>
+        <td>{{ book.isbn }}</td>
+        <td>{{ book.author }}</td>
+        <td>{{ book.category }}</td>
+        {% if  book.quantity != 0 %}
+          <td>{{ book.quantity }}</td>
+        {% else  %}
+          <td><span class="badge badge-danger badge-pill">Not Available</span></td>
+        {% endif  %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p style="page-break-before: always;"></p>
+
+  <h1 style="font-size: 25px;">Issued Books to Student In The Library</h1>
+  <table class="table table-striped" style="border: 1px solid black; padding: 5px;">
+    <thead> 
+    <tr>
+    <th scope="col" style="width: 50px;">S.No.</th>
+    <th scope="col" style="text-align: left; width: 120px;">Borrower's Name</th>
+    <th scope="col" style="text-align: left; width: 150px;">Branch / Semester</th>
+    <th scope="col" style="text-align: left; width: 100px;">Enrollment</th>
+    <th scope="col" style="text-align: left; width: 160px;" class="w-25">Book Title</th>
+    <th scope="col" style="text-align: left; width: 80px;">Issued Date</th>
+    <th scope="col" style="text-align: left; width: 70px;">Due Date</th>
+    <th scope="col" style="text-align: left; width: 40;">Fine</th>
+    </tr>
+    </thead>
+    <tbody>
+      {% for t in issuedbooks %}
+        <tr>
+          <th scope="row">{{forloop.counter0|add:1}}</th>
+          <td>{{t.0}}</td>
+          <td>{{t.1}}</td>
+          <td class="book_name_truncate">{{t.2}}</td>          
+          <td>{{t.3}}</td>
+          <td>{{t.5}}</td>
+          <td>{{t.6}}</td>
+          <td>{{t.7}}</td>
+        </tr>
+        {%endfor%}
+    </tbody>
+    </table>
+    
+    <p style="page-break-before: always;"></p>
+ 
+    <table class="table table-striped" style="border: 1px solid black; padding: 5px;">
+      <thead style="font-size: 14px;"> 
+      <tr style="background-color: #c2c2c2;">
+      <th scope="col" style="width: 50px;">S.No.</th>
+      <th scope="col" style="text-align: left; width: 250px;">Description</th>
+      <th scope="col" style="text-align: left; width: 120px;">Total Quantity</th>
+      </tr>
+      </thead>
+      <tbody style="font-size: 13px;">
+          <tr >
+            <th scope="row">1</th>
+            <td>Available Books</td>
+            <td>{{ avlbooksquantity }}</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td>Issued Books</td>
+            <td>{{ issuedbooksquantity }}</td>
+          </tr>
+          <tr style="background-color: #d8d8d8;">
+            <th scope="row">3</th>
+            <td >Total Books</td>
+            <td>{{ totalbooks }}</td>
+          </tr>
+      </tbody>
+      </table>
+
+
+</body>
+</html>

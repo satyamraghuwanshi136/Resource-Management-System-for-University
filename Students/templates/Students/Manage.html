@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+		<title>Attendance System</title>
+		{% load static %} {% include 'Resources/Head.html' %}
+	</head>
+
+	<body id="page-top">
+		<div id="wrapper">
+			<nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
+				<div class="container-fluid d-flex flex-column p-0">
+					<a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
+						<div class="sidebar-brand-icon"><img src="{% static 'Resources/images/logo.svg' %}" width="32" height="32" /></div>
+						<div class="sidebar-brand-text mx-3"></div>
+					</a>
+					<hr class="sidebar-divider my-0" />
+					<ul class="nav navbar-nav text-light" id="accordionSidebar">
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Administration:Dashboard' %}"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Attendance:Manage' %}"><i class="fas fa-clipboard-list"></i><span>Attendance</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Marks:Manage' %}"><i class="fas fa-trophy"></i><span>Marks Distribution</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Mails:Compose' %}"><i class="fas fa-envelope"></i><span>Send Emails</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Department:Manage' %}"><i class="fas fa-building"></i><span>Course and Subjects</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Administration:Inventory_Manage' %}"><i class="fas fa-tasks"></i><span>Lab Management</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Furniture:index' %}"><i class="fas fa-table"></i><span>Furniture</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Library:Manage' %}"><i class="fas fa-book-reader"></i><span>Library</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Thesis:Manage' %}"><i class="fas fa-file-alt"></i><span>Thesis</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link active" href="{% url 'Students:Manage' %}"><i class="fas fa-users"></i><span>Students</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Faculty:Manage' %}"><i class="fas fa-user-friends"></i><span>Faculties</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Administration:Profile' %}"><i class="fas fa-cog"></i><span>Account Settings</span></a>
+						</li>
+					</ul>
+					<div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+				</div>
+			</nav>
+			<div class="d-flex flex-column" id="content-wrapper">
+				<div id="content">
+					{% include 'Resources/Menu.html' %}
+					<div class="container-fluid">
+						<div class="d-sm-flex justify-content-between align-items-center mb-4">
+							<h3 class="text-dark mb-0">Manage Student</h3>
+						</div>
+						<div class="row">
+							<div class="col-md-6 col-xl-3 mb-4">
+								<div class="card shadow border-left-primary py-2">
+									<div class="card-body">
+										<div class="text-uppercase text-primary font-weight-bold text-xs mb-1"><span>Search Student</span></div>
+										<div class="form-group py-4">
+											<form method="POST" action="{% url 'Students:Search' %}">
+												{% csrf_token %}
+												<p>{{ Search.First }}</p>
+												<strong><em>-AND- -OR-</em></strong>
+												<p>{{ Search.Last }}</p>
+												<strong><em>-OR-</em></strong>
+												<p>{{ Search.Email }}</p>
+												<strong><em>-OR-</em></strong>
+												<p>{{ Search.Contact }}</p>
+												<strong><em>-OR-</em></strong>
+												<p>{{ Search.Enrollment }}</p>
+												<button type="submit" class="btn btn-success"><i class="fas fa-search"></i>&nbsp;&nbsp;Search</button>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-6 col-xl-3 mb-4">
+								<div class="card shadow border-left-primary py-2">
+									<div class="card-body">
+										<div class="text-uppercase text-primary font-weight-bold text-xs mb-1"><span>Student Semester Shift</span></div>
+										<div class="form-group py-4">
+											<form method="POST" enctype="multipart/form-data" action="{% url 'Students:ChangeSemester' %}">
+												{% csrf_token %}
+												<h4>Select Source Semester</h4>
+												<p>
+													<label for="department4">Department</label>
+													<select class="form-control" id="department4" onchange="onDepartmentChange('#department4', '#course4', '', '', '');">
+														<option value="0" disabled selected>--Select Department--</option>
+														{% for i in Departments %}
+														<option value="{{ i.id }}">{{ i.Name }}</option>
+														{% endfor %}
+													</select>
+												</p>
+												<p>
+													<select class="form-control collapse" name="course4" id="course4" onchange="onCourseChange('#course4', '#branch4', '', '', '');">
+														<option value="0">----</option>
+													</select>
+												</p>
+												<p>
+													<select class="form-control collapse" name="branch4" id="branch4" onchange="onBranchChange('#branch4', '#semester4', '#semesterButton1', '#semesterButton2', '#semesterButton3');">
+														<option value="0">----</option>
+													</select>
+												</p>
+												<p>
+													<select class="form-control collapse" name="semester4" id="semester4">
+														<option value="0">----</option>
+													</select>
+												</p>
+												<br/>
+												<br/>
+												<h4>Select Destination Semester</h4>
+												<p>
+													<label for="department5">Department</label>
+													<select class="form-control" id="department5" onchange="onDepartmentChange('#department5', '#course5', '', '', '');">
+														<option value="0" disabled selected>--Select Department--</option>
+														{% for i in Departments %}
+														<option value="{{ i.id }}">{{ i.Name }}</option>
+														{% endfor %}
+													</select>
+												</p>
+												<p>
+													<select class="form-control collapse" name="course5" id="course5" onchange="onCourseChange('#course5', '#branch5', '', '', '');">
+														<option value="0">----</option>
+													</select>
+												</p>
+												<p>
+													<select class="form-control collapse" name="branch5" id="branch5" onchange="onBranchChange('#branch5', '#semester5', '#semesterButton1', '#semesterButton2', '#semesterButton3');">
+														<option value="0">----</option>
+													</select>
+												</p>
+												<p>
+													<select class="form-control collapse" name="semester5" id="semester5" onchange="onSemesterChange('#semester5', '', '#semesterChangeButton', '', '');">
+														<option value="0">----</option>
+													</select>
+												</p>
+												<button id="semesterChangeButton" type="submit" class="btn btn-warning"><i class="fas fa-edit"></i>&nbsp;&nbsp;Change</button>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-6 col-xl-3 mb-4">
+								<div class="card shadow border-left-primary py-2">
+									<div class="card-body">
+										<div class="text-uppercase text-primary font-weight-bold text-xs mb-1"><span>Student Excel Sheet Upload</span></div>
+										<div class="form-group py-4">
+											<form method="POST" enctype="multipart/form-data" action="{% url 'Students:Add' %}">
+												{% csrf_token %}
+												{{ StudentCSV.as_p }}
+												<button type="submit" class="btn btn-warning"><i class="fas fa-user-plus"></i>&nbsp;&nbsp;Upload</button>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-6 col-xl-3 mb-4">
+								<div class="card shadow border-left-primary py-2">
+									<div class="card-body">
+										<div class="text-uppercase text-primary font-weight-bold text-xs mb-1"><span>Remove Student</span></div>
+										<div class="form-group py-4">
+											<form method="POST" action="{% url 'Students:Remove' %}">
+												{% csrf_token %}
+												<p>
+													<label for="id_remove">Student Enrollment</label>
+													<input type="text" id="id_remove" name="student_remove" value="" class="form-control" placeholder="Enrollment" required />
+												</p>
+												<p class="{{ Visiblity }} text-{{ color }}">{{ Message }}</p>
+												<button type="submit" class="btn btn-danger"><i class="fas fa-user-minus"></i>&nbsp;&nbsp;Remove</button>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				{% include 'Resources/Footer.html' %}
+			</div>
+			<a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+		</div>
+		{% include 'Resources/Links.html' %}
+		<!-- Other JavaScript -->
+		<script src="{% static 'Resources/js/main.js' %}"></script>
+		<script>
+			$(document).ready(function () {
+				//Event code end here
+				$("#sidebarToggleTop").trigger("click"); //trigger its click
+			});
+
+			$(function () {
+				$("#id_remove").keyup(function () {
+					this.value = this.value.toLocaleUpperCase();
+				});
+			});
+
+			$(function () {
+				$("#id_Enrollment").keyup(function () {
+					this.value = this.value.toLocaleUpperCase();
+				});
+			});
+
+			function onDepartmentChange(departmentFieldID, courseFieldID, disabledButtonID1, disabledButtonID2, disabledButtonID3) {
+				var deptid = $(departmentFieldID).val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Resources:Course' %}",
+					type: "POST",
+					data: { depart: deptid },
+					dataType: "json",
+					success: function (response) {
+						var len = Object.keys(response).length;
+
+						$(courseFieldID).empty();
+						$(courseFieldID).append("<option value='0' disabled selected>--Select Course--</option>");
+
+						$.each(response, function (key, value) {
+							$(courseFieldID).append("<option value='" + key + "'>" + value + "</option>");
+						});
+
+						$(courseFieldID).removeClass("collapse");
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID1).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID2).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID3).removeAttr("disabled");
+						}
+					},
+				});
+			}
+
+			function onCourseChange(courseFieldID, branchFieldID, disabledButtonID1, disabledButtonID2, disabledButtonID3) {
+				var deptid = $(courseFieldID).val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Resources:Branch' %}",
+					type: "POST",
+					data: { course: deptid },
+					dataType: "json",
+					success: function (response) {
+						var len = Object.keys(response).length;
+
+						$(branchFieldID).empty();
+						$(branchFieldID).append("<option value='0' disabled selected>--Select Branch--</option>");
+
+						$.each(response, function (key, value) {
+							$(branchFieldID).append("<option value='" + key + "'>" + value + "</option>");
+						});
+
+						$(branchFieldID).removeClass("collapse");
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID1).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID2).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID3).removeAttr("disabled");
+						}
+					},
+				});
+			}
+
+			function onBranchChange(branchFieldID, semesterFieldID, disabledButtonID1, disabledButtonID2, disabledButtonID3) {
+				var deptid = $(branchFieldID).val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Resources:Semester' %}",
+					type: "POST",
+					data: { branch: deptid },
+					dataType: "json",
+					success: function (response) {
+						var len = Object.keys(response).length;
+
+						$(semesterFieldID).empty();
+						$(semesterFieldID).append("<option value='0' disabled selected>--Select Semester--</option>");
+
+						$.each(response, function (key, value) {
+							$(semesterFieldID).append("<option value='" + key + "'>" + value + "</option>");
+						});
+
+						$(semesterFieldID).removeClass("collapse");
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID1).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID2).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID3).removeAttr("disabled");
+						}
+					},
+				});
+			}
+
+			function onSemesterChange(semesterFieldID, subjectFieldID, disabledButtonID1, disabledButtonID2, disabledButtonID3) {
+				var deptid = $(semesterFieldID).val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Resources:Subject' %}",
+					type: "POST",
+					data: { semester: deptid },
+					dataType: "json",
+					success: function (response) {
+						var len = Object.keys(response).length;
+
+						$(subjectFieldID).empty();
+						$(subjectFieldID).append("<option value='0' disabled selected>--Select Subject--</option>");
+
+						$.each(response, function (key, value) {
+							$(subjectFieldID).append("<option value='" + key + "'>" + value + "</option>");
+						});
+
+						$(subjectFieldID).removeClass("collapse");
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID1).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID2).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID3).removeAttr("disabled");
+						}
+					},
+				});
+			}
+		</script>
+	</body>
+</html>

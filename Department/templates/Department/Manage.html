@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+		<title>Attendance System</title>
+		{% load static %} {% include 'Resources/Head.html' %}
+		<style>
+			@media (max-width: 576px) {
+				li {
+					width: 100%;
+				}
+			}
+
+			@media (max-width: 768px) {
+				li {
+					width: 100%;
+				}
+			}
+		</style>
+	</head>
+
+	<body id="page-top">
+		<div id="wrapper">
+			<nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
+				<div class="container-fluid d-flex flex-column p-0">
+					<a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
+						<div class="sidebar-brand-icon"><img src="{% static 'Resources/images/logo.svg' %}" width="32" height="32" /></div>
+						<div class="sidebar-brand-text mx-3"></div>
+					</a>
+					<hr class="sidebar-divider my-0" />
+					<ul class="nav navbar-nav text-light" id="accordionSidebar">
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Administration:Dashboard' %}"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Attendance:Manage' %}"><i class="fas fa-clipboard-list"></i><span>Attendance</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Marks:Manage' %}"><i class="fas fa-trophy"></i><span>Marks Distribution</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Mails:Compose' %}"><i class="fas fa-envelope"></i><span>Send Emails</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link active" href="{% url 'Department:Manage' %}"><i class="fas fa-building"></i><span>Course and Subjects</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Administration:Inventory_Manage' %}"><i class="fas fa-tasks"></i><span>Lab Management</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Furniture:index' %}"><i class="fas fa-table"></i><span>Furniture</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Library:Manage' %}"><i class="fas fa-book-reader"></i><span>Library</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Thesis:Manage' %}"><i class="fas fa-file-alt"></i><span>Thesis</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Students:Manage' %}"><i class="fas fa-users"></i><span>Students</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Faculty:Manage' %}"><i class="fas fa-user-friends"></i><span>Faculties</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Administration:Profile' %}"><i class="fas fa-cog"></i><span>Account Settings</span></a>
+						</li>
+					</ul>
+					<div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+				</div>
+			</nav>
+			<div class="d-flex flex-column" id="content-wrapper">
+				<div id="content">
+					{% include 'Resources/Menu.html' %}
+					<div class="container-fluid">
+						<div class="d-sm-flex justify-content-between align-items-center mb-4">
+							<h3 class="text-dark mb-0">Manage Course and Subjects</h3>
+						</div>
+						<div class="row">
+							<div class="col-md-6 col-xl-5 mb-4">
+								<div class="card shadow border-left-primary py-2">
+									<div class="card-body">
+										<ul class="nav nav-tabs" id="myTab" role="tablist">
+											<li class="nav-item" role="presentation">
+												<a class="nav-link active" id="department-tab" data-toggle="tab" href="#department" role="tab" aria-controls="department" aria-selected="true">Department</a>
+											</li>
+											<li class="nav-item" role="presentation">
+												<a class="nav-link" id="course-tab" data-toggle="tab" href="#course" role="tab" aria-controls="course" aria-selected="false">Course</a>
+											</li>
+											<li class="nav-item" role="presentation">
+												<a class="nav-link" id="branch-tab" data-toggle="tab" href="#branch" role="tab" aria-controls="branch" aria-selected="false">Branch</a>
+											</li>
+											<li class="nav-item" role="presentation">
+												<a class="nav-link" id="semester-tab" data-toggle="tab" href="#semester" role="tab" aria-controls="semester" aria-selected="false">Semester</a>
+											</li>
+											<li class="nav-item" role="presentation">
+												<a class="nav-link" id="subject-tab" data-toggle="tab" href="#subject" role="tab" aria-controls="subject" aria-selected="false">Subject</a>
+											</li>
+										</ul>
+										<div class="tab-content" id="myTabContent">
+											<div class="tab-pane fade show active" id="department" role="tabpanel" aria-labelledby="department-tab">
+												<!-- Department -->
+												<div style="padding: 20px">
+													<div class="text-uppercase text-primary font-weight-bold text-xs mb-1"><span>Add/Modify Department</span></div>
+													<div class="form-group py-4">
+														<p>
+															<label for="department1">Department</label>
+															<select class="form-control" id="department1">
+																<option value="0" disabled selected>--Select Department--</option>
+																{% for i in Departments %}
+																<option value="{{ i.id }}">{{ i.Name }}</option>
+																{% endfor %}
+															</select>
+														</p>
+
+														<button class="btn btn-success" style="margin-top: 5px; width: 170px" type="button" onclick="modelDataChange('#Model_Add', '#Model_Add_Field', '', '#Model_Add_Resource_Field_Hidden', 'Department', '');"><i class="fas fa-user-plus"></i>&nbsp;&nbsp;Add New</button>
+														<button class="btn btn-warning" style="margin-top: 5px; width: 170px" type="button" onclick="modelDataChange('#Model_Update', '#Model_Update_Field_Hidden', '#department1', '#Model_Update_Resource_Field_Hidden', 'Department', '');"><i class="fas fa-edit"></i>&nbsp;&nbsp;Modify</button>
+														<button class="btn btn-danger" style="margin-top: 5px; width: 170px" type="button" onclick="modelDataChange('#Model_Delete', '#Model_Delete_Field_Hidden', '#department1', '#Model_Delete_Resource_Field_Hidden', 'Department', '');"><i class="fas fa-trash-alt"></i>&nbsp;&nbsp;Delete</button>
+													</div>
+												</div>
+											</div>
+											<div class="tab-pane fade" id="course" role="tabpanel" aria-labelledby="course-tab">
+												<!-- Course -->
+												<div style="padding: 20px">
+													<div class="text-uppercase text-primary font-weight-bold text-xs mb-1"><span>Add/Modify Course</span></div>
+													<div class="form-group py-4">
+														<p>
+															<label for="department2">Department</label>
+															<select class="form-control" id="department2" onchange="onDepartmentChange('#department2', '#course2', '#courseButton1', '#courseButton2', '#courseButton3');">
+																<option value="0" disabled selected>--Select Department--</option>
+																{% for i in Departments %}
+																<option value="{{ i.id }}">{{ i.Name }}</option>
+																{% endfor %}
+															</select>
+														</p>
+														<p>
+															<select class="form-control collapse" name="course" id="course2">
+																<option value="0">----</option>
+															</select>
+														</p>
+
+														<button id="courseButton1" style="margin-top: 5px; width: 170px" class="btn btn-success" type="button" onclick="modelDataChange('#Model_Add', '#Model_Add_Field', '', '#Model_Add_Resource_Field_Hidden', 'Course', '#department2');" disabled="disabled"><i class="fas fa-user-plus"></i>&nbsp;&nbsp;Add New</button>
+														<button id="courseButton2" style="margin-top: 5px; width: 170px" class="btn btn-warning" type="button" onclick="modelDataChange('#Model_Update', '#Model_Update_Field_Hidden', '#course2', '#Model_Update_Resource_Field_Hidden', 'Course', '');" disabled="disabled"><i class="fas fa-edit"></i>&nbsp;&nbsp;Modify</button>
+														<button id="courseButton3" style="margin-top: 5px; width: 170px" class="btn btn-danger" type="button" onclick="modelDataChange('#Model_Delete', '#Model_Delete_Field_Hidden', '#course2', '#Model_Delete_Resource_Field_Hidden', 'Course', '');" disabled="disabled"><i class="fas fa-trash-alt"></i>&nbsp;&nbsp;Delete</button>
+													</div>
+												</div>
+											</div>
+											<div class="tab-pane fade" id="branch" role="tabpanel" aria-labelledby="branch-tab">
+												<!-- Branch -->
+												<div style="padding: 20px">
+													<div class="text-uppercase text-primary font-weight-bold text-xs mb-1"><span>Add/Modify Branch</span></div>
+													<div class="form-group py-4">
+														<p>
+															<label for="department3">Department</label>
+															<select class="form-control" id="department3" onchange="onDepartmentChange('#department3', '#course3', '', '', '');">
+																<option value="0" disabled selected>--Select Department--</option>
+																{% for i in Departments %}
+																<option value="{{ i.id }}">{{ i.Name }}</option>
+																{% endfor %}
+															</select>
+														</p>
+														<p>
+															<select class="form-control collapse" name="course3" id="course3" onchange="onCourseChange('#course3', '#branch3', '#branchButton1', '#branchButton2', '#branchButton3');">
+																<option value="0">----</option>
+															</select>
+														</p>
+														<p>
+															<select class="form-control collapse" name="branch3" id="branch3">
+																<option value="0">----</option>
+															</select>
+														</p>
+
+														<button id="branchButton1" style="margin-top: 5px; width: 170px" class="btn btn-success" type="button" onclick="modelDataChange('#Model_Add', '#Model_Add_Field', '', '#Model_Add_Resource_Field_Hidden', 'Branch', '#course3');" disabled="disabled"><i class="fas fa-user-plus"></i>&nbsp;&nbsp;Add New</button>
+														<button id="branchButton2" style="margin-top: 5px; width: 170px" class="btn btn-warning" type="button" onclick="modelDataChange('#Model_Update', '#Model_Update_Field_Hidden', '#branch3', '#Model_Update_Resource_Field_Hidden', 'Branch', '');" disabled="disabled"><i class="fas fa-edit"></i>&nbsp;&nbsp;Modify</button>
+														<button id="branchButton3" style="margin-top: 5px; width: 170px" class="btn btn-danger" type="button" onclick="modelDataChange('#Model_Delete', '#Model_Delete_Field_Hidden', '#branch3', '#Model_Delete_Resource_Field_Hidden', 'Branch', '');" disabled="disabled"><i class="fas fa-trash-alt"></i>&nbsp;&nbsp;Delete</button>
+													</div>
+												</div>
+											</div>
+											<div class="tab-pane fade" id="semester" role="tabpanel" aria-labelledby="semester-tab">
+												<!-- Semester -->
+												<div style="padding: 20px">
+													<div class="text-uppercase text-primary font-weight-bold text-xs mb-1"><span>Add/Modify Semester</span></div>
+													<div class="form-group py-4">
+														<p>
+															<label for="department4">Department</label>
+															<select class="form-control" id="department4" onchange="onDepartmentChange('#department4', '#course4', '', '', '');">
+																<option value="0" disabled selected>--Select Department--</option>
+																{% for i in Departments %}
+																<option value="{{ i.id }}">{{ i.Name }}</option>
+																{% endfor %}
+															</select>
+														</p>
+														<p>
+															<select class="form-control collapse" name="course4" id="course4" onchange="onCourseChange('#course4', '#branch4', '', '', '');">
+																<option value="0">----</option>
+															</select>
+														</p>
+														<p>
+															<select class="form-control collapse" name="branch4" id="branch4" onchange="onBranchChange('#branch4', '#semester4', '#semesterButton1', '#semesterButton2', '#semesterButton3');">
+																<option value="0">----</option>
+															</select>
+														</p>
+														<p>
+															<select class="form-control collapse" name="semester4" id="semester4">
+																<option value="0">----</option>
+															</select>
+														</p>
+
+														<button id="semesterButton1" style="margin-top: 5px; width: 170px" class="btn btn-success" type="button" onclick="modelDataChange('#Model_Add', '#Model_Add_Field', '', '#Model_Add_Resource_Field_Hidden', 'Semester', '#branch4');" disabled="disabled"><i class="fas fa-user-plus"></i>&nbsp;&nbsp;Add New</button>
+														<button id="semesterButton2" style="margin-top: 5px; width: 170px" class="btn btn-warning" type="button" onclick="modelDataChange('#Model_Update', '#Model_Update_Field_Hidden', '#semester4', '#Model_Update_Resource_Field_Hidden', 'Semester', '');" disabled="disabled"><i class="fas fa-edit"></i>&nbsp;&nbsp;Modify</button>
+														<button id="semesterButton3" style="margin-top: 5px; width: 170px" class="btn btn-danger" type="button" onclick="modelDataChange('#Model_Delete', '#Model_Delete_Field_Hidden', '#semester4', '#Model_Delete_Resource_Field_Hidden', 'Semester', '');" disabled="disabled"><i class="fas fa-trash-alt"></i>&nbsp;&nbsp;Delete</button>
+													</div>
+												</div>
+											</div>
+											<div class="tab-pane fade" id="subject" role="tabpanel" aria-labelledby="subject-tab">
+												<!-- Subject -->
+												<div style="padding: 20px">
+													<div class="text-uppercase text-primary font-weight-bold text-xs mb-1"><span>Add/Modify Subject</span></div>
+													<div class="form-group py-4">
+														<p>
+															<label for="department5">Department</label>
+															<select class="form-control" id="department5" onchange="onDepartmentChange('#department5', '#course5', '', '', '');">
+																<option value="0" disabled selected>--Select Department--</option>
+																{% for i in Departments %}
+																<option value="{{ i.id }}">{{ i.Name }}</option>
+																{% endfor %}
+															</select>
+														</p>
+														<p>
+															<select class="form-control collapse" name="course5" id="course5" onchange="onCourseChange('#course5', '#branch5', '', '', '');">
+																<option value="0">----</option>
+															</select>
+														</p>
+														<p>
+															<select class="form-control collapse" name="branch5" id="branch5" onchange="onBranchChange('#branch5', '#semester5', '', '', '');">
+																<option value="0">----</option>
+															</select>
+														</p>
+														<p>
+															<select class="form-control collapse" name="semester5" id="semester5" onchange="onSemesterChange('#semester5', '#subject5', '#subjectButton1', '#subjectButton2', '#subjectButton3');">
+																<option value="0">----</option>
+															</select>
+														</p>
+														<p>
+															<select class="form-control collapse" name="subject5" id="subject5">
+																<option value="0">----</option>
+															</select>
+														</p>
+
+														<button id="subjectButton1" style="margin-top: 5px; width: 170px" class="btn btn-success" type="button" onclick="subjectModelDataChange('#Subject_Model_Add', '#Subject_Model_Add_Field', '', '#Subject_Model_Add_Resource_Field_Hidden', 'Subject', '#semester5');" disabled="disabled"><i class="fas fa-user-plus"></i>&nbsp;&nbsp;Add New</button>
+														<button id="subjectButton2" style="margin-top: 5px; width: 170px" class="btn btn-warning" type="button" onclick="subjectModelDataChange('#Subject_Model_Update', '#Subject_Model_Update_Field_Hidden', '#subject5', '#Subject_Model_Update_Resource_Field_Hidden', 'Subject', '');" disabled="disabled"><i class="fas fa-edit"></i>&nbsp;&nbsp;Modify</button>
+														<button id="subjectButton3" style="margin-top: 5px; width: 170px" class="btn btn-danger" type="button" onclick="subjectModelDataChange('#Subject_Model_Delete', '#Subject_Model_Delete_Field_Hidden', '#subject5', '#Subject_Model_Delete_Resource_Field_Hidden', 'Subject', '');" disabled="disabled"><i class="fas fa-trash-alt"></i>&nbsp;&nbsp;Delete</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Model For Modify and Delete -->
+				<section id="Model_Section">
+					<!-- Modal Add Details -->
+					<div class="modal fade" id="Model_Add" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="Model_Add_Label" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="Model_Add_Label">Add Details</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<div class="form-group py-4">
+										<p>
+											<label for="Model_Add_Field">New Name</label>
+											<input class="form-control" type="text" value="" id="Model_Add_Field" />
+										</p>
+										<input type="hidden" value="" id="Model_Add_Field_Hidden" />
+										<input type="hidden" value="" id="Model_Add_Resource_Field_Hidden" />
+										<input type="hidden" value="" id="Model_Add_ReferenceID_Field_Hidden" />
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									<button type="button" class="btn btn-primary" onclick="modalAddData()" data-dismiss="modal">Add</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Modal Update Details -->
+					<div class="modal fade" id="Model_Update" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="Model_Update_Label" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="Model_Update_Label">Change Details</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<div class="form-group py-4">
+										<p>
+											<label for="Model_Update_Field">Change Name</label>
+											<input class="form-control" type="text" value="" id="Model_Update_Field" />
+										</p>
+										<input type="hidden" value="" id="Model_Update_Field_Hidden" />
+										<input type="hidden" value="" id="Model_Update_Resource_Field_Hidden" />
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									<button type="button" class="btn btn-primary" onclick="modalUpdateData()" data-dismiss="modal">Update</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Modal Delete Confirmation -->
+					<div class="modal fade" id="Model_Delete" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="Model_Delete_Label" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="Model_Delete_Label">Delete Data</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<div class="form-group py-4">
+										<p>Are you sure you want to delete this?</p>
+										<input type="hidden" value="" id="Model_Delete_Field_Hidden" />
+										<input type="hidden" value="" id="Model_Delete_Resource_Field_Hidden" />
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									<button type="button" class="btn btn-primary" onclick="modalDeleteData()" data-dismiss="modal">Delete</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<!-- End -->
+
+				<!-- Subject Model For Modify and Delete -->
+				<section id="Subject_Model_Section">
+					<!-- Modal Add Details -->
+					<div class="modal fade" id="Subject_Model_Add" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="Subject_Model_Add_Label" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="Subject_Model_Add_Label">Add Details</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<div class="form-group py-4">
+										<p>
+											<label for="Subject_Model_Add_Field">Subject Name</label>
+											<input class="form-control" type="text" value="" id="Subject_Model_Add_Field" />
+										</p>
+										<p>
+											<label for="Subject_Model_Add_Field">Subject Theory Lectures</label>
+											<input class="form-control" type="text" value="" id="Subject_Model_Theory_Field" />
+										</p>
+										<p>
+											<label for="Subject_Model_Add_Field">Subject Lab Lectures</label>
+											<input class="form-control" type="text" value="" id="Subject_Model_Lab_Field" />
+										</p>
+										<input type="hidden" value="" id="Subject_Model_Add_Field_Hidden" />
+										<input type="hidden" value="" id="Subject_Model_Add_Resource_Field_Hidden" />
+										<input type="hidden" value="" id="Subject_Model_Add_ReferenceID_Field_Hidden" />
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									<button type="button" class="btn btn-primary" onclick="subjectModelAddData()" data-dismiss="modal">Add</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Modal Update Details -->
+					<div class="modal fade" id="Subject_Model_Update" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="Subject_Model_Update_Label" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="Subject_Model_Update_Label">Change Details</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<div class="form-group py-4">
+										<p>
+											<label for="Subject_Model_Add_Field">Subject Name</label>
+											<input class="form-control" type="text" value="" id="Subject_Model_Update_Field" />
+										</p>
+										<p>
+											<label for="Subject_Model_Add_Field">Subject Theory Lectures</label>
+											<input class="form-control" type="text" value="" id="Subject_Model_Theory_Update_Field" />
+										</p>
+										<p>
+											<label for="Subject_Model_Add_Field">Subject Lab Lectures</label>
+											<input class="form-control" type="text" value="" id="Subject_Model_Lab_Update_Field" />
+										</p>
+										<input type="hidden" value="" id="Subject_Model_Update_Field_Hidden" />
+										<input type="hidden" value="" id="Subject_Model_Update_Resource_Field_Hidden" />
+										<input type="hidden" value="" id="Subject_Model_Update_ReferenceID_Field_Hidden" />
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									<button type="button" class="btn btn-primary" onclick="subjectModalUpdateData()" data-dismiss="modal">Update</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Modal Delete Confirmation -->
+					<div class="modal fade" id="Subject_Model_Delete" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="Subject_Model_Delete_Label" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="Subject_Model_Delete_Label">Delete Data</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<div class="form-group py-4">
+										<p>Are you sure you want to delete this?</p>
+										<input type="hidden" value="" id="Subject_Model_Delete_Field_Hidden" />
+										<input type="hidden" value="" id="Subject_Model_Delete_Resource_Field_Hidden" />
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									<button type="button" class="btn btn-primary" onclick="subjectModalDeleteData()" data-dismiss="modal">Delete</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<!-- End -->
+				<!-- Display Information Modal -->
+				<section>
+					<div class="modal fade" id="Modal_Add_Successfull_Message" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="Modal_Add_Successfull_MessageLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="Modal_Add_Successfull_MessageLabel">Data Added</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">Record Created Successfully.</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-success" onclick="ReloadPage();" data-dismiss="modal">Okay</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal fade" id="Modal_Update_Successfull_Message" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="Modal_Update_Successfull_MessageLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="Modal_Update_Successfull_MessageLabel">Data Updated</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">Record Updated Successfully.</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-success" onclick="ReloadPage();" data-dismiss="modal">Okay</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal fade" id="Modal_Delete_Successfull_Message" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="Modal_Delete_Successfull_MessageLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="Modal_Delete_Successfull_MessageLabel">Data Deleted</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">Record Deleted Successfully.</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-success" onclick="ReloadPage();" data-dismiss="modal">Okay</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal fade" id="Modal_Duplicate_Message" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="Modal_Duplicate_MessageLabel" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="Modal_Duplicate_MessageLabel">Data Already Exist</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">This record is already exist, Write a different name.</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-danger" data-dismiss="modal">Okay</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<!-- End -->
+				{% include 'Resources/Footer.html' %}
+			</div>
+			<a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+		</div>
+		{% include 'Resources/Links.html' %}
+		<!-- Other JavaScript -->
+		<script src="{% static 'Resources/js/main.js' %}"></script>
+		<script>
+			function ReloadPage() {
+				location = location;
+			}
+
+			$(document).ready(function () {
+				//Event code end here
+				$("#sidebarToggleTop").trigger("click"); //trigger its click
+			});
+
+			function getCookie(c_name) {
+				if (document.cookie.length > 0) {
+					c_start = document.cookie.indexOf(c_name + "=");
+					if (c_start != -1) {
+						c_start = c_start + c_name.length + 1;
+						c_end = document.cookie.indexOf(";", c_start);
+						if (c_end == -1) c_end = document.cookie.length;
+						return unescape(document.cookie.substring(c_start, c_end));
+					}
+				}
+				return "";
+			}
+
+			// Modal Data Add, Update and Delete Functions
+
+			function modalAddData() {
+				var depttext = $("#Model_Add_Field").val();
+				var resourcetype = $("#Model_Add_Resource_Field_Hidden").val();
+				var fieldReference = $("#Model_Add_ReferenceID_Field_Hidden").val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Department:HandleModel' %}",
+					type: "PUT",
+					data: { resource: resourcetype, departtext: depttext, referenceFieldValue: fieldReference },
+					dataType: "json",
+					success: function (response) {
+						if (response.hasOwnProperty("Error")) {
+							$("#Modal_Duplicate_Message").modal();
+						} else if (response.hasOwnProperty("Success")) {
+							$("#Modal_Add_Successfull_Message").modal();
+						}
+					},
+				});
+			}
+
+			function modalUpdateData() {
+				var deptid = $("#Model_Update_Field_Hidden").val();
+				var depttext = $("#Model_Update_Field").val();
+				var resourcetype = $("#Model_Update_Resource_Field_Hidden").val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Department:HandleModel' %}",
+					type: "POST",
+					data: { id: deptid, resource: resourcetype, departtext: depttext },
+					dataType: "json",
+					success: function (response) {
+						if (response.hasOwnProperty("Error")) {
+							$("#Modal_Duplicate_Message").modal();
+						} else if (response.hasOwnProperty("Success")) {
+							$("#Modal_Update_Successfull_Message").modal();
+						}
+					},
+				});
+			}
+
+			function modalDeleteData() {
+				var deptid = $("#Model_Delete_Field_Hidden").val();
+				var resourcetype = $("#Model_Delete_Resource_Field_Hidden").val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Department:HandleModel' %}",
+					type: "DELETE",
+					data: { id: deptid, resource: resourcetype },
+					dataType: "json",
+					success: function (response) {
+						$("#Modal_Delete_Successfull_Message").modal();
+					},
+				});
+			}
+			// Modal End
+
+			// Subject Modal Data Add, Update and Delete Functions
+
+			function subjectModelAddData() {
+				var subjectText = $("#Subject_Model_Add_Field").val();
+				var subjectTheory = $("#Subject_Model_Theory_Field").val();
+				var subjectLab = $("#Subject_Model_Lab_Field").val();
+				var semesterReference = $("#Subject_Model_Add_ReferenceID_Field_Hidden").val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Department:HandleModel' %}",
+					type: "PUT",
+					data: { resource: "Subject", semesterReferenceVariable: semesterReference, subjectTextVariable: subjectText, subjectTheoryVariable: subjectTheory, subjectLabVariable: subjectLab },
+					dataType: "json",
+					success: function (response) {
+						if (response.hasOwnProperty("Error")) {
+							$("#Modal_Duplicate_Message").modal();
+						} else if (response.hasOwnProperty("Success")) {
+							$("#Modal_Add_Successfull_Message").modal();
+						}
+					},
+				});
+			}
+
+			function subjectModalUpdateData() {
+				var subjectText = $("#Subject_Model_Update_Field").val();
+				var subjectTheory = $("#Subject_Model_Theory_Update_Field").val();
+				var subjectLab = $("#Subject_Model_Lab_Update_Field").val();
+				var subjectReference = $("#Subject_Model_Update_Field_Hidden").val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Department:HandleModel' %}",
+					type: "POST",
+					data: { resource: "Subject", subjectReferenceVariable: subjectReference, subjectTextVariable: subjectText, subjectTheoryVariable: subjectTheory, subjectLabVariable: subjectLab },
+					dataType: "json",
+					success: function (response) {
+						if (response.hasOwnProperty("Error")) {
+							$("#Modal_Duplicate_Message").modal();
+						} else if (response.hasOwnProperty("Success")) {
+							$("#Modal_Update_Successfull_Message").modal();
+						}
+					},
+				});
+			}
+
+			function subjectModalDeleteData() {
+				var subjectReference = $("#Subject_Model_Delete_Field_Hidden").val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Department:HandleModel' %}",
+					type: "DELETE",
+					data: { resource: "Subject", subjectReferenceVariable: subjectReference },
+					dataType: "json",
+					success: function (response) {
+						$("#Modal_Delete_Successfull_Message").modal();
+					},
+				});
+			}
+			// Modal End
+
+			function onDepartmentChange(departmentFieldID, courseFieldID, disabledButtonID1, disabledButtonID2, disabledButtonID3) {
+				var deptid = $(departmentFieldID).val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Resources:Course' %}",
+					type: "POST",
+					data: { depart: deptid },
+					dataType: "json",
+					success: function (response) {
+						var len = Object.keys(response).length;
+
+						$(courseFieldID).empty();
+						$(courseFieldID).append("<option value='0' disabled selected>--Select Course--</option>");
+
+						$.each(response, function (key, value) {
+							$(courseFieldID).append("<option value='" + key + "'>" + value + "</option>");
+						});
+
+						$(courseFieldID).removeClass("collapse");
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID1).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID2).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID3).removeAttr("disabled");
+						}
+					},
+				});
+			}
+
+			function onCourseChange(courseFieldID, branchFieldID, disabledButtonID1, disabledButtonID2, disabledButtonID3) {
+				var deptid = $(courseFieldID).val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Resources:Branch' %}",
+					type: "POST",
+					data: { course: deptid },
+					dataType: "json",
+					success: function (response) {
+						var len = Object.keys(response).length;
+
+						$(branchFieldID).empty();
+						$(branchFieldID).append("<option value='0' disabled selected>--Select Branch--</option>");
+
+						$.each(response, function (key, value) {
+							$(branchFieldID).append("<option value='" + key + "'>" + value + "</option>");
+						});
+
+						$(branchFieldID).removeClass("collapse");
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID1).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID2).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID3).removeAttr("disabled");
+						}
+					},
+				});
+			}
+
+			function onBranchChange(branchFieldID, semesterFieldID, disabledButtonID1, disabledButtonID2, disabledButtonID3) {
+				var deptid = $(branchFieldID).val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Resources:Semester' %}",
+					type: "POST",
+					data: { branch: deptid },
+					dataType: "json",
+					success: function (response) {
+						var len = Object.keys(response).length;
+
+						$(semesterFieldID).empty();
+						$(semesterFieldID).append("<option value='0' disabled selected>--Select Semester--</option>");
+
+						$.each(response, function (key, value) {
+							$(semesterFieldID).append("<option value='" + key + "'>" + value + "</option>");
+						});
+
+						$(semesterFieldID).removeClass("collapse");
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID1).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID2).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID3).removeAttr("disabled");
+						}
+					},
+				});
+			}
+
+			function onSemesterChange(semesterFieldID, subjectFieldID, disabledButtonID1, disabledButtonID2, disabledButtonID3) {
+				var deptid = $(semesterFieldID).val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Resources:Subject' %}",
+					type: "POST",
+					data: { semester: deptid },
+					dataType: "json",
+					success: function (response) {
+						var len = Object.keys(response).length;
+
+						$(subjectFieldID).empty();
+						$(subjectFieldID).append("<option value='0' disabled selected>--Select Subject--</option>");
+
+						$.each(response, function (key, value) {
+							$(subjectFieldID).append("<option value='" + key + "'>" + value + "</option>");
+						});
+
+						$(subjectFieldID).removeClass("collapse");
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID1).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID2).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID3).removeAttr("disabled");
+						}
+					},
+				});
+			}
+
+			function modelDataChange(modelID, updateFieldID, valueFieldID, updateResourceFieldID, valueResourceFieldID, ReferenceFieldID) {
+				$(updateFieldID).val($(valueFieldID).val());
+				$(updateResourceFieldID).val(valueResourceFieldID);
+
+				if (ReferenceFieldID != "") {
+					$("#Model_Add_ReferenceID_Field_Hidden").val($(ReferenceFieldID).val());
+				}
+
+				$("#Model_Update_Field").val($(valueFieldID + " option:selected").text());
+
+				$(modelID).modal();
+			}
+
+			function subjectModelDataChange(modelID, updateFieldID, valueFieldID, updateResourceFieldID, valueResourceFieldID, ReferenceFieldID) {
+				$(updateFieldID).val($(valueFieldID).val());
+				$(updateResourceFieldID).val(valueResourceFieldID);
+
+				$("#Subject_Model_Add_ReferenceID_Field_Hidden").val($(ReferenceFieldID).val());
+
+				$(modelID).modal();
+			}
+		</script>
+	</body>
+</html>

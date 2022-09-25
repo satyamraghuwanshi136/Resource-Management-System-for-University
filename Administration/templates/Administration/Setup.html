@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+		<title>Attendance System</title>
+		{% load static %} {% include 'Resources/Head.html' %}
+	</head>
+
+	<body id="page-top">
+		<div id="wrapper">
+			<nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
+				<div class="container-fluid d-flex flex-column p-0">
+					<a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
+						<div class="sidebar-brand-icon"><img src="{% static 'Resources/images/logo.svg' %}" width="32" height="32" /></div>
+						<div class="sidebar-brand-text mx-3"></div>
+					</a>
+					<hr class="sidebar-divider my-0" />
+					<ul class="nav navbar-nav text-light" id="accordionSidebar">
+						<!-- Empty Menu -->
+					</ul>
+					<div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+				</div>
+			</nav>
+			<div class="d-flex flex-column" id="content-wrapper">
+				<div id="content">
+					{% include 'Resources/Menu.html' %}
+					<div class="container-fluid">
+						<div class="d-sm-flex justify-content-between align-items-center mb-4">
+							<h3 class="text-dark mb-0">Account Setup</h3>
+						</div>
+						<div class="row justify-content-center">
+							<div class="col-md-6 col-xl-5 mb-4">
+								<div class="card shadow border-left-primary py-2">
+									<div class="card-body">
+										<div class="text-uppercase text-primary font-weight-bold text-xs mb-1"><span>Additional Details Required</span></div>
+										<div class="form-group">
+											<p>
+												<label>Select account type</label>
+												<select id="AccountTypeSelection" class="form-control" onchange="typeSelect();">
+													<option value="0" selected disabled>--Select Options--</option>
+													<option value="1">Student</option>
+													<option value="2">Faculty</option>
+												</select>
+											</p>
+											<p class="{{ Visiblity }} text-danger">Error Occurred</p>
+										</div>
+										<div id="StudentDetails" class="collapse">
+											<div class="form-group py-4">
+												<form method="POST" enctype="multipart/form-data">
+													{% csrf_token %} {{ StudentForm.as_p }}
+													<p>
+														<label>Email: {{ user.email }}</label>
+													</p>
+													<p>
+														<label for="department4">Select Department</label>
+														<select class="form-control" id="department4" name="department4" onchange="onDepartmentChange('#department4', '#course4', '', '', '');">
+															<option value="0">-Select Department-</option>
+															{% for i in Departments %}
+															<option value="{{ i.id }}">{{ i.Name }}</option>
+															{% endfor %}
+														</select>
+													</p>
+													<p>
+														<select class="form-control collapse" name="course4" id="course4" onchange="onCourseChange('#course4', '#branch4', '', '', '');">
+															<option value="0">----</option>
+														</select>
+													</p>
+													<p>
+														<select class="form-control collapse" name="branch4" id="branch4" onchange="onBranchChange('#branch4', '#semester4', '#semesterButton1', '#semesterButton2', '#semesterButton3');">
+															<option value="0">----</option>
+														</select>
+													</p>
+													<p>
+														<select class="form-control collapse" name="semester4" id="semester4" onchange="onSemesterChange('#studentSubmit');">
+															<option value="0">----</option>
+														</select>
+													</p>
+													<input type="hidden" name="isStudent" value="True" />
+													<button id="studentSubmit" class="btn btn-success" type="submit" disabled="disabled"><i class="fas fa-user-plus"></i>&nbsp;&nbsp;Submit Details</button>
+												</form>
+											</div>
+										</div>
+										<div id="FacultyDetails" class="collapse">
+											<div class="form-group py-4">
+												<form id="FacultyForm" method="POST" enctype="multipart/form-data">
+													{% csrf_token %} 
+													{{ FacultyForm.as_p }}
+													<p>
+														<label>Email: {{ user.email }}</label>
+													</p>
+													<input type="hidden" name="isFaculty" value="True" />
+													<button id="studentSubmit" class="btn btn-success" type="submit"><i class="fas fa-user-plus"></i>&nbsp;&nbsp;Submit Details</button>
+												</form>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<section>
+							<div class="modal fade" id="Modal_Enroll_Duplicate_Message" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="Modal_Enroll_Duplicate_MessageLabel" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="Modal_Enroll_Duplicate_MessageLabel">Enrollment Already Exist</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">This enrollment already exist in the records, you can not create account with this enrollment, contact college administration for further help.</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-danger" data-dismiss="modal">Okay</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal fade" id="Modal_Employee_Duplicate_Message" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="Modal_Employee_Duplicate_MessageLabel" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="Modal_Employee_Duplicate_MessageLabel">Employee ID Already Exist</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">This employee id already exist in the records, you can not create account with this employee ID, contact college administration for further help.</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-danger" data-dismiss="modal">Okay</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</section>
+						{% include 'Resources/Footer.html' %}
+					</div>
+					<a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+				</div>
+			</div>
+		</div>
+		{% include 'Resources/Links.html' %}
+		<!-- Other JavaScript -->
+		<script src="{% static 'Resources/js/main.js' %}"></script>
+		<script>
+			function getCookie(c_name) {
+				if (document.cookie.length > 0) {
+					c_start = document.cookie.indexOf(c_name + "=");
+					if (c_start != -1) {
+						c_start = c_start + c_name.length + 1;
+						c_end = document.cookie.indexOf(";", c_start);
+						if (c_end == -1) c_end = document.cookie.length;
+						return unescape(document.cookie.substring(c_start, c_end));
+					}
+				}
+				return "";
+			}
+
+			$(document).ready(function () {
+				//Event code end here
+				$("#sidebarToggleTop").trigger("click"); //trigger its click
+			});
+
+			function onDepartmentChange(departmentFieldID, courseFieldID, disabledButtonID1, disabledButtonID2, disabledButtonID3) {
+				var deptid = $(departmentFieldID).val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Resources:Course' %}",
+					type: "POST",
+					data: { depart: deptid },
+					dataType: "json",
+					success: function (response) {
+						var len = Object.keys(response).length;
+
+						$(courseFieldID).empty();
+						$(courseFieldID).append("<option value='0' disabled selected>--Select Course--</option>");
+
+						$.each(response, function (key, value) {
+							$(courseFieldID).append("<option value='" + key + "'>" + value + "</option>");
+						});
+
+						$(courseFieldID).removeClass("collapse");
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID1).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID2).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID3).removeAttr("disabled");
+						}
+					},
+				});
+			}
+
+			function onCourseChange(courseFieldID, branchFieldID, disabledButtonID1, disabledButtonID2, disabledButtonID3) {
+				var deptid = $(courseFieldID).val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Resources:Branch' %}",
+					type: "POST",
+					data: { course: deptid },
+					dataType: "json",
+					success: function (response) {
+						var len = Object.keys(response).length;
+
+						$(branchFieldID).empty();
+						$(branchFieldID).append("<option value='0' disabled selected>--Select Branch--</option>");
+
+						$.each(response, function (key, value) {
+							$(branchFieldID).append("<option value='" + key + "'>" + value + "</option>");
+						});
+
+						$(branchFieldID).removeClass("collapse");
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID1).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID2).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID3).removeAttr("disabled");
+						}
+					},
+				});
+			}
+
+			function onBranchChange(branchFieldID, semesterFieldID, disabledButtonID1, disabledButtonID2, disabledButtonID3) {
+				var deptid = $(branchFieldID).val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Resources:Semester' %}",
+					type: "POST",
+					data: { branch: deptid },
+					dataType: "json",
+					success: function (response) {
+						var len = Object.keys(response).length;
+
+						$(semesterFieldID).empty();
+						$(semesterFieldID).append("<option value='0' disabled selected>--Select Semester--</option>");
+
+						$.each(response, function (key, value) {
+							$(semesterFieldID).append("<option value='" + key + "'>" + value + "</option>");
+						});
+
+						$(semesterFieldID).removeClass("collapse");
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID1).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID2).removeAttr("disabled");
+						}
+
+						if (disabledButtonID1 != "") {
+							$(disabledButtonID3).removeAttr("disabled");
+						}
+					},
+				});
+			}
+
+			function onSemesterChange(buttonID) {
+				$(buttonID).removeAttr("disabled");
+			}
+
+			function typeSelect() {
+				if ($("#AccountTypeSelection").val() == "1") {
+					$("#StudentDetails").removeClass("collapse");
+					$("#FacultyDetails").addClass("collapse");
+				} else if ($("#AccountTypeSelection").val() == "2") {
+					$("#FacultyDetails").removeClass("collapse");
+					$("#StudentDetails").addClass("collapse");
+				} else {
+					$("#StudentDetails").addClass("collapse");
+					$("#FacultyDetails").addClass("collapse");
+				}
+			}
+
+			$(function () {
+				$("#id_Enrollment").keyup(function () {
+					this.value = this.value.toLocaleUpperCase();
+				});
+			});
+
+			$(function () {
+				$("#id_EmployeeID").keyup(function () {
+					this.value = this.value.toLocaleUpperCase();
+				});
+			});
+
+			function CheckEnroll() {
+				var studentEnroll = $("#id_Enrollment").val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Administration:CheckEnroll' %}",
+					type: "GET",
+					data: { Enroll: studentEnroll },
+					dataType: "json",
+					success: function (response) {
+						if (response.hasOwnProperty("Error")) {
+							$("#Modal_Enroll_Duplicate_Message").modal();
+						}
+					},
+				});
+			}
+
+			function CheckEmployee() {
+				var employeeID = $("#id_EmployeeID").val();
+
+				$.ajax({
+					headers: { "X-CSRFToken": getCookie("csrftoken") },
+					url: "{% url 'Administration:CheckEmployee' %}",
+					type: "GET",
+					data: { Employee: employeeID },
+					dataType: "json",
+					success: function (response) {
+						if (response.hasOwnProperty("Error")) {
+							$("#Modal_Employee_Duplicate_Message").modal();
+						}
+					},
+				});
+			}
+
+			function checkDates() {
+				
+				
+			}
+
+			$("#FacultyForm").submit(function( event ) {
+			
+				var joining = new Date($('#id_Joining').val());
+				var dob = new Date($('#id_DOB').val());
+
+				if(joining <= dob) {
+					alert("Joining date must be greater than date of birth.");
+					event.preventDefault();
+				}
+			
+			});
+		</script>
+	</body>
+</html>

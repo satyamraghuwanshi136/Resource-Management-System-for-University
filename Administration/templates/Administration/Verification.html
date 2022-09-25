@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Attendance System</title>
+    {% load static %}
+    {% include 'Resources/Head.html' %}
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
+            <div class="container-fluid d-flex flex-column p-0">
+                <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
+                    <div class="sidebar-brand-icon"><img src="{% static 'Resources/images/logo.svg' %}" width="32" height="32" /></div>
+                    <div class="sidebar-brand-text mx-3"></div>
+                </a>
+                <hr class="sidebar-divider my-0">
+                <ul class="nav navbar-nav text-light" id="accordionSidebar">
+                    <!-- Empty Menu -->
+                </ul>
+                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+            </div>
+        </nav>
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                {% include 'Resources/Menu.html' %}
+                <div class="container-fluid">
+                    <div class="d-sm-flex justify-content-between align-items-center mb-4">
+                        <h3 class="text-dark mb-0">Verification</h3>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-xl-3 mb-4">
+                            <div class="card shadow border-left-primary py-2">
+                                <div class="card-body">
+                                    <div class="text-uppercase text-primary font-weight-bold text-xs mb-1"><span>Verification Pending</span></div>
+                                    <br/>
+                                    <p>First Name: {{ first }}</p>
+                                    <p>Last Name: {{ last }}</p>
+                                    <p>Email Address: {{ email }}</p>
+                                    <p>Faculty ID: {{ facultyid }}</p>
+                                    <p>Status: Verification Pending</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% include 'Resources/Footer.html' %}
+                </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+            </div>
+        </div>
+    </div>
+    {% include 'Resources/Links.html' %}
+    <!-- Other JavaScript -->
+    <script src="{% static 'Resources/js/main.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            //Event code end here
+            $("#sidebarToggleTop").trigger('click') //trigger its click
+        });
+    </script>
+
+</body>
+
+</html>

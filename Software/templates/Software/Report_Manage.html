@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+	<title>Software Management</title>
+	{% load static %} {% include 'Resources/Head.html' %}
+	<style>
+		body {
+			color: black;
+		}
+
+		th,
+		td {
+			padding: 5px;
+		}
+
+		#all th {
+			background-color: #1c42c0;
+			color: rgba(255, 243, 243, 0.966);
+		}
+	</style>
+</head>
+
+<body id="page-top">
+	<div id="wrapper">
+		<div class="d-flex flex-column" id="content-wrapper">
+			<div id="content">
+				{% include 'Resources/Header.html' %}
+				<div class="container-fluid ">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="justify-content-center text-center">
+                                <div class="row">
+								<h2>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+									Softwares Use in Labs </h2>
+                                {% now "d-m-y" as todays_date %}
+                                <div> Date : {{todays_date }}</div>
+							</div>
+                                </div>
+<!--							<em>Total : {{items|length}}</em>-->
+							<div style="text-align: center;">
+								<table border="0.5" style="margin: 10px; width: 100%;" >
+								<thead>
+										<tr>
+											<th>Software Id</th>
+											<th>Software Name</th>
+											<th>Lab No.</th>
+											<th>No. of Users</th>
+											<th>Expiry Date</th>
+											<th>Assigned by</th>
+											<th>Assign Date</th>
+
+
+										</tr>
+									</thead>
+									<tbody>
+										{% for Software_manage in items %}
+										<tr>
+											<td>{{Software_manage.Soft_id}}</td>
+											<td>{{Software_manage.Soft_id.SName}}</td>
+											<td>{{Software_manage.LabI}}</td>
+											<td>{{Software_manage.Users}}</td>
+											{% now "y-m-d" as todays_date %}
+										      {% if Software_manage.Soft_id.ExpD|date:"y-m-d" > todays_date %}
+											<td>{{Software_manage.Soft_id.ExpD}}</td>
+											{% else %}
+											<td bgcolor="red">{{Software_manage.Soft_id.ExpD}}</td>
+											{% endif %}
+											<td>{{Software_manage.assigned_by}}</td>
+											<td>{{Software_manage.assign_date}}</td>
+
+										</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<br>
+			{% include 'Resources/Footer2.html' %}
+		</div>
+		<a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+	</div>
+	{% include 'Resources/Links.html' %}
+
+</body>
+
+</html>

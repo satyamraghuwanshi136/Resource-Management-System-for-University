@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <title>All books</title>
+</head>
+<body>
+  <h1 style="font-size: 25px;">All Not Available Books In The Library</h1>
+  <table class="table table-striped" style="border: 1px solid black; padding: 5px;">
+    <thead>
+      <tr>
+        <th scope="col" style="width: 60px;">S.No.</th>
+        <th scope="col" style="text-align: left; width: 220px;">Book Name</th>
+        <th scope="col" style="text-align: left; width: 80px;">ISBN</th>
+        <th scope="col" style="text-align: left; ">Author</th>
+        <th scope="col" style="text-align: left;">Category</th>
+        <th scope="col" style="text-align: left; width: 60px;">Quantity</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in books %}
+      {% if  book.quantity == 0 %}
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td>{{ book.name }}</td>
+        <td>{{ book.isbn }}</td>
+        <td>{{ book.author }}</td>
+        <td>{{ book.category }}</td>
+        <td>Not Available</td>
+      </tr>
+      {% endif  %}
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

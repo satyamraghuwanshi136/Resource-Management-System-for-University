@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+	<title>Furniture Management</title>
+	{% load static %} {% include 'Resources/Head.html' %}
+	<style>
+		body {
+			color: black;
+		}
+
+		th,
+		td {
+			padding: 5px;
+		}
+
+		#all th {
+			background-color: #1c42c0;
+			color: rgba(255, 243, 243, 0.966);
+		}
+	</style>
+</head>
+
+<body id="page-top">
+	<div id="wrapper">
+		<div class="d-flex flex-column" id="content-wrapper">
+			<div id="content">
+				{% include 'Resources/Header.html' %}
+				<div class="container-fluid ">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="justify-content-center text-center">
+								<h2>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+									Discard Items Report </h2>
+								{% now "d-m-y" as todays_date %}
+                                <div> Date : {{todays_date }}</div>
+							</div>
+<!--							<em>Total : {{items|length}}</em>-->
+							<div style="text-align: center;">
+								<table border="0.5" style="margin: 10px; width: 100%;" >
+                               <thead>
+                <tr>
+                  <th scope="col">Item ID &nbsp;</th>
+                  <th scope="col">Item Name &nbsp;</th>
+                  <th scope="col">Item Company</th>
+<!--                  <th scope="col">Purchase From</th>-->
+<!--                  <th scope="col">Purchase Date</th>-->
+                   <th scope="col">No. of Items</th>
+<!--                   <th scope="col">Warranty</th>-->
+<!--                  <th scope="col">Price of Individual</th>-->
+                  <th scope="col">Added By</th>
+                  <th scope="col">Add Date</th>
+
+                 <!-- <th scope="col">Maitenance</th> -->
+                </tr>
+              </thead>
+              <tbody>
+                {% for Maintain in items  %}
+                <tr>
+                  <td>{{ Maintain.item_id }}</td>
+                  <td>{{ Maintain.item_id.item_name }}</td>
+                  <td>{{ Maintain.item_id.company}}</td>
+<!--                   <td>{{ Maintain.item_id.Pur_from}}</td>-->
+<!--                   <td>{{ Maintain.item_id.purchase_date}}</td>-->
+                  <td>{{ Maintain.qty}}</td>
+<!--                   <td>{{ Maintain.item_id.warn}}</td>-->
+<!--                   <td>{{ Maintain.item_id.ind_pri}}</td>-->
+                   <td>{{ Maintain.added_by}}</td>
+                  <td>{{ Maintain.date}}</td>
+
+                {% endfor %}
+
+              </tbody>
+
+								</table>
+
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<br>
+			{% include 'Resources/Footer2.html' %}
+		</div>
+		<a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+	</div>
+	{% include 'Resources/Links.html' %}
+
+</body>
+
+</html>

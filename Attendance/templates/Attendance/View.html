@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+		<title>Attendance System</title>
+		{% load static %} {% include 'Resources/Head.html' %}
+	</head>
+
+	<body id="page-top">
+		<div id="wrapper">
+			<nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
+				<div class="container-fluid d-flex flex-column p-0">
+					<a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
+						<div class="sidebar-brand-icon"><img src="{% static 'Resources/images/logo.svg' %}" width="32" height="32" /></div>
+						<div class="sidebar-brand-text mx-3"></div>
+					</a>
+					<hr class="sidebar-divider my-0" />
+					<ul class="nav navbar-nav text-light" id="accordionSidebar">
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Administration:Dashboard' %}"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link active" href="{% url 'Attendance:Manage' %}"><i class="fas fa-clipboard-list"></i><span>Attendance</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Marks:Manage' %}"><i class="fas fa-trophy"></i><span>Marks Distribution</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Mails:Compose' %}"><i class="fas fa-envelope"></i><span>Send Emails</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Department:Manage' %}"><i class="fas fa-building"></i><span>Course and Subjects</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Administration:Inventory_Manage' %}"><i class="fas fa-tasks"></i><span>Lab Management</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Furniture:index' %}"><i class="fas fa-table"></i><span>Furniture</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Library:Manage' %}"><i class="fas fa-book-reader"></i><span>Library</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Thesis:Manage' %}"><i class="fas fa-file-alt"></i><span>Thesis</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Students:Manage' %}"><i class="fas fa-users"></i><span>Students</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Faculty:Manage' %}"><i class="fas fa-user-friends"></i><span>Faculties</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'Administration:Profile' %}"><i class="fas fa-cog"></i><span>Account Settings</span></a>
+						</li>
+					</ul>
+					<div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+				</div>
+			</nav>
+			<div class="d-flex flex-column" id="content-wrapper">
+				<div id="content">
+					{% include 'Resources/Menu.html' %}
+					<div class="container-fluid">
+						<h3 class="text-dark mb-4">Subject Attendance</h3>
+						<div class="card shadow">
+							<div class="card-header py-3">
+								<p class="text-primary m-0 font-weight-bold">Student Info</p>
+							</div>
+							<div class="card-body">
+								<div class="row">
+									<div class="col-md-6 text-nowrap">
+										<div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
+											<!--<label>
+                                            Show
+                                            <select class="form-control form-control-sm custom-select custom-select-sm">
+                                                <option value="10" selected>10</option>
+                                                <option value="25">25</option>
+                                                <option value="50">50</option>
+                                                <option value="100">100</option>
+                                            </select>
+                                        </label>-->
+											<label>Total Students: {{ total }}</label>
+											<br/>
+											<label>Present: {{ presentcount }}</label>
+											<br/>
+											<label>Absent: {{ absentcount }}</label>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="text-md-right dataTables_filter" id="dataTable_filter">
+											<label>
+												<!--<input type="search" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search" />-->
+											</label>
+										</div>
+									</div>
+								</div>
+								<form method="POST" action="#">
+									{% csrf_token %}
+									<div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+										<table class="table my-0" id="dataTable">
+											<thead>
+												<tr>
+													<th>Full Name</th>
+													<th>Enrollment Number</th>
+													<th>Lecture Type</th>
+													<th>Attendance</th>
+													<th>Modify</th>
+												</tr>
+											</thead>
+											<tbody>
+												{% for student in finalList %}
+												<tr>
+													<td>{{ student.Name }}</td>
+													<td>{{ student.Enrollment }}</td>
+													<td>{{ student.LectureType }}</td>
+
+													{% if student.Attendance == "Present" %}
+														<td class="text-success"><label>{{ student.Attendance }}</label></td>
+													{% else %}
+														<td class="text-danger"><label>{{ student.Attendance }}</label></td>
+													{% endif %}
+
+													{% if student.Attendance == "Present" %}
+														<td><button type="button" id="id_button_absent_{{ student.id }}" class="btn btn-primary" onclick="markAbsent({{ subjectInstance.id }}, {{ student.id }}, '{{ Date }}', '{{ AttType }}', '#id_button_absent_{{ student.id }}');">Mark Absent</button></td>
+													{% else %}
+														<td><button type="button" id="id_button_present_{{ student.id }}" class="btn btn-danger" onclick="markPresent({{ subjectInstance.id }}, {{ student.id }}, '{{ Date }}', '{{ AttType }}', '#id_button_present_{{ student.id }}');">Mark Present</button></td>
+													{% endif %}
+												</tr>
+												{% endfor %}
+											</tbody>
+											<tfoot>
+												<tr>
+													<td><strong>Full Name</strong></td>
+													<td><strong>Enrollment Number</strong></td>
+													<td><strong>Lecture Type</strong></td>
+													<td><strong>Attendance</strong></td>
+													<td><strong>Modify</strong></td>
+												</tr>
+											</tfoot>
+										</table>
+									</div>
+									<div class="row">
+										<div class="col-md-6 align-self-center">
+											<p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">
+												<!-- -->
+											</p>
+										</div>
+										<div class="col-md-6"></div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<section>
+                <div class="modal fade" id="Modal_Success_Message" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="Modal_Success_MessageLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="Modal_Success_MessageLabel">Attendance Updated</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+                            </div>
+                            <div class="modal-body"><i class="fa fa-check text-success"></i>&nbsp;Attendance Updated Successfully.</div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success" data-dismiss="modal">Okay</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="Modal_Error_Message" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="Modal_Error_MessageLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="Modal_Error_MessageLabel">Error Occurred</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+                            </div>
+                            <div class="modal-body"><i class="fa fa-times text-danger"></i>&nbsp;Internal Server Error, attendance not updated.</div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Okay</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+				{% include 'Resources/Footer.html' %}
+			</div>
+			<a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+		</div>
+		{% include 'Resources/Links.html' %}
+		<!-- Other JavaScript -->
+		<script src="{% static 'Resources/js/main.js' %}"></script>
+		<script>
+			$(document).ready(function () {
+				//Event code end here
+				$("#sidebarToggleTop").trigger("click"); //trigger its click
+			});
+
+			function getCookie(c_name) {
+				if (document.cookie.length > 0) {
+					c_start = document.cookie.indexOf(c_name + "=");
+					if (c_start != -1) {
+						c_start = c_start + c_name.length + 1;
+						c_end = document.cookie.indexOf(";", c_start);
+						if (c_end == -1) c_end = document.cookie.length;
+						return unescape(document.cookie.substring(c_start, c_end));
+					}
+				}
+				return "";
+			}
+
+			function markAbsent(subjectID, studentID, AttDate, AttLectureType, buttonID) {
+				
+				if (AttLectureType != '')
+				{
+					$.ajax({
+						headers: { "X-CSRFToken": getCookie("csrftoken") },
+						url: "{% url 'Attendance:UpdateAttendance' %}",
+						type: "POST",
+						data: { currentSubject: subjectID, currentStudent: studentID, currentDate: AttDate, currentLecture: AttLectureType, operationType: 'Absent' },
+						dataType: "json",
+						success: function (response) {
+
+							if (response.hasOwnProperty("Success")) {
+								$("#Modal_Success_Message").modal();
+								$(buttonID).html('Updated');
+								$(buttonID).prop("disabled", true);
+							}
+							else
+							{
+								$("#Modal_Error_Message").modal();
+							}
+
+						},
+					});
+				}
+				else
+				{
+					alert("Can not update attendance on the day when there is no student present at all.");
+				}
+
+			}
+
+			function markPresent(subjectID, studentID, AttDate, AttLectureType, buttonID) {
+				
+				if (AttLectureType != '')
+				{
+					$.ajax({
+						headers: { "X-CSRFToken": getCookie("csrftoken") },
+						url: "{% url 'Attendance:UpdateAttendance' %}",
+						type: "POST",
+						data: { currentSubject: subjectID, currentStudent: studentID, currentDate: AttDate, currentLecture: AttLectureType, operationType: 'Present' },
+						dataType: "json",
+						success: function (response) {
+
+							if (response.hasOwnProperty("Success")) {
+								$("#Modal_Success_Message").modal();
+								$(buttonID).html('Updated');
+								$(buttonID).prop("disabled", true);
+							}
+							else
+							{
+								$("#Modal_Error_Message").modal();
+							}
+
+						},
+					});
+				}
+				else
+				{
+					alert("Can not update attendance on the day when there is no student present at all.");
+				}
+			}
+		</script>
+	</body>
+</html>
